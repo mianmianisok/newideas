@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>心理自评量表工具</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
+    background:#F0F2F5;color:#1F2937;min-height:100vh;
+  }
+  .hero{
+    background:linear-gradient(135deg,#5B8FF9 0%,#6366F1 50%,#8B5CF6 100%);
+    color:#fff;padding:60px 20px 48px;text-align:center;
+  }
+  .hero h1{font-size:28px;font-weight:700;margin-bottom:8px;}
+  .hero p{font-size:15px;opacity:.85;max-width:480px;margin:0 auto;line-height:1.7;}
+
+  .container{max-width:720px;margin:-24px auto 0;padding:0 16px 60px;}
+
+  .cards{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:32px;}
+  @media(max-width:520px){.cards{grid-template-columns:1fr;}}
+
+  .card{
+    background:#fff;border-radius:14px;padding:28px 24px;
+    box-shadow:0 4px 20px rgba(0,0,0,.08);
+    text-decoration:none;color:inherit;
+    transition:all .25s;border:2px solid transparent;
+  }
+  .card:hover{
+    transform:translateY(-4px);box-shadow:0 8px 30px rgba(0,0,0,.12);
+  }
+
+  .card-icon{
+    width:56px;height:56px;border-radius:14px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:28px;margin-bottom:16px;
+  }
+  .card-sas .card-icon{background:#EFF6FF;color:#3B82F6;}
+  .card-sds .card-icon{background:#EFF6FF;color:#2563EB;}
+  .card-scl .card-icon{background:#F5F3FF;color:#7C3AED;}
+  .card-dass .card-icon{background:#FAF5FF;color:#8B5CF6;}
+  .card-pdq .card-icon{background:#F0F9FF;color:#0EA5E9;}
+
+  .card h2{font-size:18px;font-weight:700;margin-bottom:6px;}
+  .card .sub{font-size:13px;color:#6B7280;margin-bottom:14px;line-height:1.5;}
+  .card .meta{display:flex;gap:8px;flex-wrap:wrap;}
+  .card .tag{
+    font-size:11px;padding:3px 10px;border-radius:20px;font-weight:500;
+  }
+  .card-sas .tag{background:#EFF6FF;color:#3B82F6;}
+  .card-sds .tag{background:#EFF6FF;color:#2563EB;}
+  .card-scl .tag{background:#F5F3FF;color:#7C3AED;}
+  .card-dass .tag{background:#FAF5FF;color:#8B5CF6;}
+  .card-pdq .tag{background:#F0F9FF;color:#0EA5E9;}
+
+  .card .arrow{
+    float:right;margin-top:-30px;font-size:20px;color:#9CA3AF;
+    transition:color .2s;
+  }
+  .card:hover .arrow{color:#6B7280;}
+
+  .section-title{
+    font-size:16px;font-weight:700;color:#374151;margin-bottom:12px;
+    padding-left:4px;border-left:3px solid #6366F1;padding-top:2px;padding-bottom:2px;
+  }
+
+  .notice{
+    background:#FFFBEB;border:1px solid #FDE68A;border-radius:10px;
+    padding:18px;font-size:13px;color:#92400E;line-height:1.7;
+  }
+  .notice strong{display:block;margin-bottom:6px;font-size:14px;}
+
+  .footer{
+    text-align:center;padding:24px;font-size:12px;color:#9CA3AF;
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>🧠 心理自评量表工具</h1>
+  <p>专业的心理测评自评工具，帮助您了解自身的心理健康状况</p>
+</div>
+
+<div class="container">
+  <div class="section-title">情绪评估</div>
+  <div class="cards">
+    <a href="sas.html" class="card card-sas">
+      <div class="card-icon">😰</div>
+      <h2>焦虑自评量表</h2>
+      <div class="sub">Zung 焦虑自评量表 (SAS)，用于评估焦虑状态的主观感受</div>
+      <div class="meta">
+        <span class="tag">20 题</span>
+        <span class="tag">约 5 分钟</span>
+        <span class="tag">4 级评分</span>
+      </div>
+      <span class="arrow">→</span>
+    </a>
+
+    <a href="sds.html" class="card card-sds">
+      <div class="card-icon">😔</div>
+      <h2>抑郁自评量表</h2>
+      <div class="sub">Zung 抑郁自评量表 (SDS)，用于评估抑郁状态的主观感受</div>
+      <div class="meta">
+        <span class="tag">20 题</span>
+        <span class="tag">约 5 分钟</span>
+        <span class="tag">4 级评分</span>
+      </div>
+      <span class="arrow">→</span>
+    </a>
+
+    <a href="dass21.html" class="card card-dass">
+      <div class="card-icon">🎭</div>
+      <h2>情绪自评量表</h2>
+      <div class="sub">DASS-21 抑郁-焦虑-压力量表，同时评估三个情绪维度</div>
+      <div class="meta">
+        <span class="tag">21 题</span>
+        <span class="tag">约 5 分钟</span>
+        <span class="tag">3 维度</span>
+      </div>
+      <span class="arrow">→</span>
+    </a>
+
+    <a href="scl90.html" class="card card-scl">
+      <div class="card-icon">📋</div>
+      <h2>症状自评量表</h2>
+      <div class="sub">SCL-90 症状自评量表，综合评估 10 个维度的心理症状</div>
+      <div class="meta">
+        <span class="tag">90 题</span>
+        <span class="tag">约 15 分钟</span>
+        <span class="tag">5 级评分</span>
+        <span class="tag">10 因子</span>
+      </div>
+      <span class="arrow">→</span>
+    </a>
+  </div>
+
+  <div class="section-title">人格评估</div>
+  <div class="cards">
+    <a href="pdq4.html" class="card card-pdq">
+      <div class="card-icon">🧩</div>
+      <h2>人格障碍筛查</h2>
+      <div class="sub">PDQ-4+ 人格障碍筛查问卷，筛查 12 种人格障碍倾向</div>
+      <div class="meta">
+        <span class="tag">107 题</span>
+        <span class="tag">约 15 分钟</span>
+        <span class="tag">是/否</span>
+        <span class="tag">12 维度</span>
+      </div>
+      <span class="arrow">→</span>
+    </a>
+  </div>
+
+  <div class="notice">
+    <strong>⚠️ 重要提示</strong>
+    本工具中的量表仅作为心理健康自我筛查的参考，<strong>不能替代专业医疗诊断</strong>。心理测评应由专业人员在临床背景下使用和解读。如您持续感到心理困扰或不适，请及时前往正规医院精神科或心理科就诊，寻求专业帮助。
+  </div>
+
+  <div class="footer">心理自评量表工具 · 仅供参考</div>
+</div>
+
+</body>
+</html>

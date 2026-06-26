@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>人格障碍筛查 (PDQ-4+)</title>
+<style>
+  :root{--primary:#0EA5E9;--primary-light:#38BDF8;--bg:#F0F2F5;--card:#FFF;--text:#1F2937;--text-light:#6B7280;--border:#E5E7EB;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6;}
+  .container{max-width:700px;margin:0 auto;padding:16px;}
+  .header{background:linear-gradient(135deg,#0EA5E9,#0284C7);color:#fff;border-radius:12px;padding:28px 24px;margin-bottom:16px;text-align:center;}
+  .header h1{font-size:22px;font-weight:700;margin-bottom:6px;}
+  .header p{font-size:13px;opacity:.85;}
+  .back-btn{display:inline-flex;align-items:center;gap:4px;color:#fff;font-size:13px;margin-bottom:12px;opacity:.9;cursor:pointer;background:none;border:none;font-family:inherit;text-decoration:none;}
+  .back-btn:hover{opacity:1;}
+  .progress-wrap{background:var(--card);border-radius:10px;padding:14px 18px;margin-bottom:20px;box-shadow:0 1px 4px rgba(0,0,0,.06);}
+  .progress-info{display:flex;justify-content:space-between;font-size:13px;color:var(--text-light);margin-bottom:6px;}
+  .progress-track{height:6px;background:var(--border);border-radius:3px;overflow:hidden;}
+  .progress-fill{height:100%;background:linear-gradient(90deg,var(--primary),var(--primary-light));border-radius:3px;transition:width .3s;width:0%;}
+  .q-area{animation:slideIn .3s ease;}
+  @keyframes slideIn{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
+  .q-card{background:var(--card);border-radius:14px;padding:28px 24px;box-shadow:0 2px 12px rgba(0,0,0,.07);margin-bottom:20px;}
+  .q-head{display:flex;align-items:flex-start;gap:12px;margin-bottom:24px;}
+  .q-num{background:var(--primary);color:#fff;min-width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0;}
+  .q-text{font-size:17px;font-weight:500;flex:1;line-height:1.6;padding-top:4px;}
+  .yn-opts{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .yn-opt{text-align:center;padding:18px;border:2px solid var(--border);border-radius:14px;cursor:pointer;transition:all .15s;user-select:none;background:#fff;font-size:16px;font-weight:600;}
+  .yn-opt:hover{border-color:var(--primary-light);background:#F0F9FF;}
+  .yn-opt.sel{border-color:var(--primary);background:#E0F2FE;color:var(--primary);}
+  .yn-opt .yn-sub{font-size:12px;font-weight:400;color:var(--text-light);margin-top:4px;}
+  .yn-opt.sel .yn-sub{color:var(--primary);}
+  .nav-btns{display:flex;justify-content:space-between;align-items:center;gap:12px;}
+  .nav-btn{display:inline-flex;align-items:center;gap:6px;padding:12px 28px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;border:none;font-family:inherit;}
+  .nav-prev{background:#fff;color:var(--text-light);border:1.5px solid var(--border);}
+  .nav-prev:hover{border-color:var(--primary);color:var(--primary);}
+  .nav-prev:disabled{opacity:.3;cursor:not-allowed;}
+  .nav-next{background:linear-gradient(135deg,var(--primary),#0284C7);color:#fff;box-shadow:0 3px 12px rgba(14,165,233,.3);}
+  .nav-next:hover{transform:translateY(-1px);box-shadow:0 5px 18px rgba(14,165,233,.45);}
+  .nav-btn:disabled{background:#9CA3AF!important;box-shadow:none!important;cursor:not-allowed;transform:none!important;}
+  .nav-submit{background:linear-gradient(135deg,#34D399,#059669)!important;color:#fff;box-shadow:0 3px 12px rgba(52,211,153,.3)!important;}
+  .nav-submit:hover{transform:translateY(-1px)!important;}
+  .nav-center{font-size:13px;color:var(--text-light);}
+  .unanswered{background:#FEF2F2;border:1px solid #FECACA;border-radius:10px;padding:14px 16px;margin-bottom:16px;}
+  .unanswered h4{font-size:13px;color:#B91C1C;margin-bottom:8px;}
+  .unanswered .ua-list{display:flex;flex-wrap:wrap;gap:6px;}
+  .unanswered .ua-item{display:inline-flex;align-items:center;justify-content:center;min-width:32px;height:28px;border-radius:6px;background:#fff;border:1px solid #FCA5A5;color:#B91C1C;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;}
+  .unanswered .ua-item:hover{background:#B91C1C;color:#fff;}
+  .result{animation:fadeUp .4s ease;}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+  .res-card{background:var(--card);border-radius:14px;padding:28px 20px;text-align:center;box-shadow:0 2px 12px rgba(0,0,0,.07);margin-bottom:16px;}
+  .res-level{font-size:20px;font-weight:700;margin-bottom:6px;}
+  .res-desc{font-size:13px;color:var(--text-light);max-width:480px;margin:0 auto;line-height:1.7;}
+  .factor-card{background:var(--card);border-radius:10px;padding:18px;box-shadow:0 1px 6px rgba(0,0,0,.05);margin-bottom:16px;}
+  .factor-card h3{font-size:15px;margin-bottom:14px;}
+  .f-item{margin-bottom:12px;}.f-item:last-child{margin-bottom:0;}
+  .f-head{display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px;}
+  .f-name{font-weight:500;}
+  .f-score{font-weight:700;}
+  .f-bar{height:8px;background:var(--border);border-radius:4px;overflow:hidden;}
+  .f-fill{height:100%;border-radius:4px;transition:width .6s ease;}
+  .f-level{font-size:11px;color:var(--text-light);margin-top:3px;}
+  .disclaimer{background:#FFFBEB;border:1px solid #FDE68A;border-radius:8px;padding:14px;font-size:12px;color:#92400E;line-height:1.7;}
+  .disclaimer strong{display:block;margin-bottom:4px;}
+  .restart-btn{display:inline-flex;align-items:center;gap:4px;margin-top:16px;padding:8px 24px;background:#fff;color:var(--primary);border:1.5px solid var(--primary);border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;font-family:inherit;}
+  .restart-btn:hover{background:var(--primary);color:#fff;}
+  @media(max-width:480px){.header h1{font-size:19px;}.nav-btn{padding:10px 20px;font-size:13px;}}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <a href="index.html" class="back-btn">← 返回首页</a>
+    <h1>人格障碍筛查 (PDQ-4+)</h1>
+    <p>Hyler 编制 · 107 题 · 约 15 分钟 · 是/否作答</p>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-info"><span>答题进度</span><span id="pText">1 / 107</span></div>
+    <div class="progress-track"><div class="progress-fill" id="pFill"></div></div>
+  </div>
+  <div class="q-area" id="qArea">
+    <div class="q-card">
+      <div class="q-head"><span class="q-num" id="qNum">1</span><span class="q-text" id="qText"></span></div>
+      <div class="yn-opts" id="qOpts"></div>
+    </div>
+    <div class="nav-btns">
+      <button class="nav-btn nav-prev" id="btnPrev" onclick="goPrev()">← 上一题</button>
+      <span class="nav-center" id="navCenter"></span>
+      <button class="nav-btn nav-next" id="btnNext" onclick="goNext()">下一题 →</button>
+    </div>
+    <div class="unanswered" id="unanswered" style="display:none">
+      <h4>⚠️ 以下题目尚未作答，点击可跳转：</h4>
+      <div class="ua-list" id="uaList"></div>
+    </div>
+  </div>
+  <div class="result" id="resSection" style="display:none">
+    <div class="res-card">
+      <div class="res-level" id="resLevel">--</div>
+      <div class="res-desc" id="resDesc"></div>
+    </div>
+    <div class="factor-card"><h3>12 种人格障碍维度筛查</h3><div id="fBars"></div></div>
+    <div class="disclaimer"><strong>⚠️ 免责声明</strong>本量表为人格障碍筛查工具，仅作为自我了解的参考，不能替代专业临床诊断。人格障碍的确诊需由精神科医师通过详细临床访谈进行。如测试结果让您感到困扰，请寻求专业帮助。</div>
+    <div style="text-align:center"><button class="restart-btn" onclick="restart()">↺ 重新测评</button></div>
+  </div>
+</div>
+<script>
+const QS=[
+"我尽量避免与可能批评我的人一块工作",
+"没有得到别人的建议和再三宽心，我难以作出决定",
+"我常常将功夫花在细节上而忽略了大目标",
+"我希望能引人注目",
+"我所作出的成绩远比别人所认为的要多",
+"为了使我所爱的人不离开我，我会走极端",
+"别人抱怨我没有能够完成我的工作任务和所承诺的事情",
+"我曾几次遇到过法律上的麻烦（或如果我当时被抓住，我将会有这类麻烦）",
+"与家人或朋友一起消磨时间并不使我感到有趣",
+"我从周围所发生的事中接受到特殊的信息",
+"我知道如果我任别人怎样待我，他们将会从我身上乘机得利或试图欺骗我",
+"我有时心情不好",
+"只有当我确信对方喜欢我，我才会与他们交朋友",
+"我通常心情抑郁",
+"我让我的家人和朋友为我生活中的重要事情作出决定",
+"我做事过份追求完美，因此花费不少时间",
+"我比一般人对于异性更具有吸引力",
+"我经常发现自己在想我是一个怎样重要的人，或将会成为这样的人",
+"我要么喜欢和佩服某人，要么怨恨他们，没有介于两者之间的感受",
+"我与别人打过许多次架",
+"我觉得别人并不理解和赏识我",
+"我宁可独自工作而不愿与他人一块工作",
+"我能够在一些事情发生之前便知道他们会要发生",
+"我常常寻思我所认识的人是否真正信得过",
+"我偶尔在背后议论别人",
+"由于我不想受到别人的奚落或取笑，而在与我有亲密关系的人面前压抑自己的情感",
+"我担心如果我表示与别人不一致的看法，便会失去他们的支持",
+"我为自卑感而苦恼",
+"我将工作置于与家人或朋友相聚或娱乐之前",
+"我容易显露出自己的情绪",
+"只有某些特别的人才能真正赏识和理解我",
+"我常想弄清自己究竟是何人",
+"我常缺勤，也比我所认识到大多数人更多的调换工作",
+"性方面的事不能引起我的兴趣",
+"别人认为我心情易变及脾气暴躁",
+"我常能觉察和感受别人感受不到的事情",
+"别人会把我向他们所说的话当作将来使我处于不利的把柄",
+"有一些人我不怎么喜欢",
+"我比大多数人对于批评或拒绝更敏感",
+"一旦事情需要我独自去干，我便感到难以开展",
+"我比别人有更强的道德观念",
+"我是我自己最严厉的批评者",
+"我用自己外貌来得到我所需要的注意",
+"我很需要别人注意我或称赞我",
+"我曾试过伤害自己或自杀",
+"我做过很多不考虑后果的事情",
+"很少有什么活动能够使我感兴趣",
+"人们常常难以理解我谈话中的内容",
+"我不喜欢上级交待我应该怎样干活的工作",
+"我时常留意与捉摸别人话中所隐含的意思",
+"我从未说过一次谎",
+"我害怕陌生人，因为那会使我感到不自在",
+"我很需要别人喜欢我，以致为此作出许多我不情愿做的事情",
+"我积累了不少我不再需要而又不忍心扔掉的东西",
+"我虽然说得很多，但别人说我难以抓住要点",
+"我有很多的忧虑",
+"当店员或营业员使我在柜台前和排队等待较长时间，我容易感到受到怠慢而生气",
+"我是一个情绪不稳定的人",
+"对我来说说谎很容易，我常常这样做",
+"我对于拥有亲密朋友没有什么兴趣",
+"我常常保持警惕以防被别人乘机利用",
+"我不会忘记和原谅那些待我不好的人",
+"我对那些比我走运的人感到不满",
+"核战争也许不是一个那么坏的想法",
+"我会在独处时感到无能为力和无法照顾自己",
+"我常常不愿与他人合作或将事情托付给别人干，只是因为我不放心他们是否真正会按我的要求和方式去干",
+"我有一种表演天赋",
+"有些人认为我利用别人",
+"我觉得我的生活乏味",
+"我对周围的人甚为挑剔与苛求",
+"我不在乎别人会怎么说我",
+"我难以在一种只有两人的场合单独与对方打交道",
+"人们常怪我没能意识到他们心情不好",
+"我看上去可能会使别人认为我有些古怪和离奇",
+"我喜欢干冒险的事",
+"我在回答了这份问卷时说了不少谎",
+"我诉说许多我的苦楚和不幸",
+"我难以控制恼怒或脾气",
+"有的人嫉妒我",
+"我易受别人的影响",
+"我认为自己节约，而别人认为我吝啬",
+"一旦我与别人的亲密关系终止，我便需要很快与其他人建立起这种关系",
+"我为自卑感而苦恼",
+"我是一个悲观的人",
+"当别人中伤我时，我毫不犹豫给予还击",
+"别人围在我身旁会使我感到紧张不安",
+"在没有经历过的新场合，我害怕自己会发窘",
+"我时常很害怕别人会离开我而让我自己照顾自己的一切事情",
+"人们说我相当固执",
+"与跟我交往的人相比，我总是很快与别人建立起亲密关系",
+"我能在对别人发火之后很快向他们道歉",
+"别人觉得我傲慢",
+"遇到紧张的事情时，我会变得敏感多疑或记不起刚刚发生过的事情",
+"只要我能得到我所需要的，我不会在乎别人会受到什么伤害",
+"我与别人保持相当的距离",
+"我常想弄明白我的伴侣是否有过不忠实的行为",
+"我常有内疚感",
+"我回避做许多我应做但需人际接触的事情，因为我害怕会得不到别人的赞许或遭到拒绝与批评",
+"必须承认，我做事时总是要花许多时间考虑细节、规则或程序，以至于我感到难以像别人那样迅速和有效地完成事情",
+"一旦我发现与我关系亲密的人不再接近我，我便会感到十分烦恼并作出各种强烈的反应",
+"我与别人的关系有时变得很亲密，有时则变得充满怨恨",
+"我在表达自己的感受和情绪时比一般人更为兴奋和强烈",
+"我常常禁不住要对我周围人们的一些毛病作些否定性的评价",
+"我无论对别人还是对自己都很注意节省，尽管有人会认为我很吝惜",
+"我习惯于按自己的方式行事，难以因别人的建议而改变，即使是这些建议看来很有道理",
+"我凭一时冲动干过一些事情以至给我带来麻烦",
+"我小时候（15岁以前）干过一些不好的事情"
+];
+
+// Dimensions: name, threshold, item indices (0-based), which answer counts (true/false)
+const DIMS=[
+  {name:"偏执型",thr:4,items:[0,10,23,36,49,50,60,61,62,95],color:"#EF4444",desc:"以猜疑和偏执为特点，敏感多疑，心胸狭窄"},
+  {name:"分裂样",thr:4,items:[8,21,33,47,59,94],color:"#8B5CF6",desc:"性格孤独，感情冷漠，缺少与人相处的兴趣与能力"},
+  {name:"分裂型",thr:5,items:[9,22,35,47,48,73,74],color:"#7C3AED",desc:"孤独隔离兼有知觉扭曲与思想混乱，观念行为奇特"},
+  {name:"反社会型",thr:3,items:[7,19,20,32,48,58,63,75,93,105,106],color:"#DC2626",desc:"以自我为中心，不遵守社会规范，行动冲动"},
+  {name:"边缘型",thr:5,items:[5,18,31,34,44,45,57,77,82,92,99,100,101],color:"#F97316",desc:"高度冲动性，情绪不稳定，常伴有自伤行为和持久空虚感"},
+  {name:"表演型",thr:5,items:[3,17,29,30,42,43,44,55,66,67,79,90,102],color:"#EC4899",desc:"喜怒无常、做作、情绪表露过分，渴望不断受到赞赏"},
+  {name:"自恋型",thr:5,items:[4,16,17,30,31,43,55,68,78,79,92],color:"#F59E0B",desc:"强烈自我中心倾向，傲慢自大、缺乏同情心"},
+  {name:"回避型",thr:4,items:[0,12,25,26,38,39,51,52,72,86,87,98],color:"#0EA5E9",desc:"长期脱离社会关系，回避社交，生怕被拒绝"},
+  {name:"依赖型",thr:5,items:[1,14,15,26,40,53,65,80,88],color:"#6366F1",desc:"缺乏自信和独立性，凡事依赖别人，独自行事会感到恐惧"},
+  {name:"强迫型",thr:4,items:[2,3,15,16,29,41,54,66,70,81,89,99,103,104,105],color:"#0891B2",desc:"过分谨小慎微、严格要求、完美主义及内心不安全感"},
+  {name:"被动攻击型",thr:4,items:[6,25,38,49,56,57,70,73,85,91,103],color:"#84CC16",desc:"以被动方式表现强烈攻击倾向，表面唯唯诺诺，背地不予合作"},
+  {name:"抑郁型",thr:5,items:[11,13,28,32,42,44,56,69,77,83,84,97],color:"#3B82F6",desc:"为人悲观，总是消极看问题，沉浸在抑郁心境中"}
+];
+
+// Lie scale: items 51,76 - if both "是", results may be invalid
+const LIE_ITEMS=[50,76];
+
+const TOTAL=107;const A={};let cur=0;
+
+function showQ(){
+  const t=QS[cur];
+  const area=document.getElementById('qArea');
+  area.style.animation='none';area.offsetHeight;area.style.animation='slideIn .3s ease';
+  document.getElementById('qNum').textContent=cur+1;
+  document.getElementById('qText').textContent=t;
+  const optsEl=document.getElementById('qOpts');
+  optsEl.innerHTML=['是','否'].map((label,i)=>{
+    const v=i===0;
+    const sel=A[cur+1]===v?' sel':'';
+    return `<div class="yn-opt${sel}" onclick="pick(${cur+1},${v},this)">${label}<div class="yn-sub">${i===0?'符合':'不符合'}</div></div>`;
+  }).join('');
+  const n=Object.keys(A).length;
+  document.getElementById('pText').textContent=`${cur+1} / ${TOTAL}`;
+  document.getElementById('pFill').style.width=(n/TOTAL*100)+'%';
+  document.getElementById('btnPrev').disabled=cur===0;
+  const btn=document.getElementById('btnNext'),c=document.getElementById('navCenter');
+  if(cur===TOTAL-1){btn.textContent='查看结果';btn.className='nav-btn nav-submit';btn.disabled=n<TOTAL;c.textContent=n<TOTAL?`还有 ${TOTAL-n} 题未答`:'全部完成';}
+  else{btn.textContent='下一题 →';btn.className='nav-btn nav-next';btn.disabled=false;c.textContent='';}
+}
+
+function pick(id,v,el){
+  document.getElementById('qOpts').querySelectorAll('.yn-opt').forEach(o=>o.classList.remove('sel'));
+  el.classList.add('sel');A[id]=v;
+  const n=Object.keys(A).length;
+  document.getElementById('pFill').style.width=(n/TOTAL*100)+'%';
+  if(cur===TOTAL-1){document.getElementById('btnNext').disabled=n<TOTAL;document.getElementById('navCenter').textContent=n<TOTAL?`还有 ${TOTAL-n} 题未答`:'全部完成';updateUnanswered();}
+  else{setTimeout(()=>{if(A[id]===v&&cur<TOTAL-1){cur++;showQ();}},400);}
+}
+function updateUnanswered(){
+  const missing=[];for(let i=0;i<TOTAL;i++){if(A[i+1]===undefined)missing.push(i);}
+  const el=document.getElementById('unanswered'),list=document.getElementById('uaList');
+  if(missing.length>0){el.style.display='block';list.innerHTML=missing.map(i=>`<span class="ua-item" onclick="jumpTo(${i})">第${i+1}题</span>`).join('');}
+  else{el.style.display='none';}
+}
+function jumpTo(idx){cur=idx;showQ();}
+
+function goPrev(){if(cur>0){cur--;showQ();}}
+function goNext(){if(cur<TOTAL-1){cur++;showQ();}else if(Object.keys(A).length===TOTAL)showResult();}
+
+function showResult(){
+  // Check lie scale
+  let lieCount=0;
+  LIE_ITEMS.forEach(i=>{if(A[i]===true)lieCount++;});
+
+  // Calculate dimension scores
+  const results=DIMS.map(d=>{
+    let score=0;
+    d.items.forEach(idx=>{if(A[idx+1]===true)score++;});
+    return{...d,score,positive:score>=d.thr};
+  });
+
+  const posCount=results.filter(d=>d.positive).length;
+
+  document.getElementById('qArea').style.display='none';
+  document.querySelector('.progress-wrap').style.display='none';
+  document.getElementById('resSection').style.display='block';
+
+  let levelText,levelColor;
+  if(lieCount>=2){
+    levelText="结果可能不可靠";levelColor="#9CA3AF";
+    document.getElementById('resDesc').textContent="您在测谎题上的得分偏高，结果可能不够准确。建议您以更坦诚的态度重新作答。";
+  } else if(posCount===0){
+    levelText="未筛查出人格障碍倾向";levelColor="#34D399";
+    document.getElementById('resDesc').textContent="您在各维度上的得分均未达到筛查临界值，目前未提示明显的人格障碍倾向。请继续保持健康的心理状态和人际关系。";
+  } else {
+    levelText=`筛查出 ${posCount} 项维度偏高`;levelColor="#F97316";
+    document.getElementById('resDesc').textContent=`以下 ${posCount} 个维度得分达到或超过临界值：${results.filter(d=>d.positive).map(d=>d.name).join('、')}。这仅表示可能存在该方面倾向，不代表确诊。建议前往专业机构进一步评估。`;
+  }
+  document.getElementById('resLevel').textContent=levelText;
+  document.getElementById('resLevel').style.color=levelColor;
+
+  document.getElementById('fBars').innerHTML=results.map(d=>{
+    const pct=Math.min(d.score/Math.max(d.items.length,1)*100,100);
+    const barColor=d.positive?d.color:'#34D399';
+    const mark=d.positive?' ⚠️':' ✓';
+    return `<div class="f-item">
+      <div class="f-head"><span class="f-name">${d.name}</span><span class="f-score" style="color:${d.positive?d.color:'var(--text-light)'}">${d.score}/${d.items.length} (≥${d.thr})${mark}</span></div>
+      <div class="f-bar"><div class="f-fill" style="width:${pct}%;background:${barColor};"></div></div>
+      <div class="f-level">${d.desc}</div>
+    </div>`;
+  }).join('');
+}
+
+function restart(){
+  Object.keys(A).forEach(k=>delete A[k]);cur=0;
+  document.getElementById('resSection').style.display='none';
+  document.querySelector('.progress-wrap').style.display='block';
+  showQ();
+}
+showQ();
+</script>
+</body>
+</html>
