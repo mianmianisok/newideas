@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>症状自评量表 (SCL-90)</title>
+<style>
+  :root {
+    --primary: #6366F1;
+    --primary-light: #818CF8;
+    --bg: #F0F2F5;
+    --card: #FFFFFF;
+    --text: #1F2937;
+    --text-light: #6B7280;
+    --border: #E5E7EB;
+    --green: #34D399;
+    --yellow: #FBBF24;
+    --orange: #F97316;
+    --red: #EF4444;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
+    background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6;
+  }
+  .container{max-width:700px;margin:0 auto;padding:16px;}
+
+  .header{
+    background:linear-gradient(135deg,#6366F1,#4F46E5);
+    color:#fff;border-radius:12px;padding:28px 24px;margin-bottom:16px;text-align:center;
+  }
+  .header h1{font-size:22px;font-weight:700;margin-bottom:6px;}
+  .header p{font-size:13px;opacity:.85;}
+  .back-link{
+    display:inline-flex;align-items:center;gap:4px;
+    color:#fff;text-decoration:none;font-size:13px;margin-bottom:12px;opacity:.9;
+  }
+  .back-link:hover{opacity:1;}
+
+  .progress-wrap{
+    background:var(--card);border-radius:10px;padding:14px 18px;
+    margin-bottom:20px;box-shadow:0 1px 4px rgba(0,0,0,.06);
+  }
+  .progress-info{display:flex;justify-content:space-between;font-size:13px;color:var(--text-light);margin-bottom:6px;}
+  .progress-track{height:6px;background:var(--border);border-radius:3px;overflow:hidden;}
+  .progress-fill{
+    height:100%;background:linear-gradient(90deg,var(--primary),var(--primary-light));
+    border-radius:3px;transition:width .3s;width:0%;
+  }
+
+  /* Single question */
+  .q-area{display:none;animation:slideIn .3s ease;}
+  @keyframes slideIn{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
+
+  .q-card{
+    background:var(--card);border-radius:14px;padding:28px 24px;
+    box-shadow:0 2px 12px rgba(0,0,0,.07);margin-bottom:20px;
+  }
+  .q-head{display:flex;align-items:flex-start;gap:12px;margin-bottom:20px;}
+  .q-num{
+    background:var(--primary);color:#fff;min-width:32px;height:32px;
+    border-radius:50%;display:flex;align-items:center;justify-content:center;
+    font-size:14px;font-weight:700;flex-shrink:0;
+  }
+  .q-text{font-size:17px;font-weight:500;flex:1;line-height:1.6;padding-top:4px;}
+
+  /* Options */
+  .opts{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;}
+  .opt{
+    text-align:center;padding:12px 4px;border:2px solid var(--border);
+    border-radius:10px;cursor:pointer;transition:all .15s;user-select:none;background:#fff;
+  }
+  .opt:hover{border-color:var(--primary-light);background:#F0F0FF;}
+  .opt.sel{border-color:var(--primary);background:#EEF2FF;}
+  .opt .o-num{font-size:14px;font-weight:600;color:var(--primary);}
+  .opt .o-text{font-size:11px;color:var(--text-light);margin-top:3px;}
+  .opt.sel .o-text{color:var(--primary);}
+
+  /* Nav */
+  .nav-btns{display:flex;justify-content:space-between;align-items:center;gap:12px;}
+  .nav-btn{
+    display:inline-flex;align-items:center;gap:6px;
+    padding:12px 28px;border-radius:10px;font-size:14px;font-weight:600;
+    cursor:pointer;transition:all .2s;border:none;
+  }
+  .nav-prev{background:#fff;color:var(--text-light);border:1.5px solid var(--border);}
+  .nav-prev:hover{border-color:var(--primary);color:var(--primary);}
+  .nav-prev:disabled{opacity:.3;cursor:not-allowed;}
+  .nav-next{
+    background:linear-gradient(135deg,var(--primary),#4F46E5);
+    color:#fff;box-shadow:0 3px 12px rgba(99,102,241,.3);
+  }
+  .nav-next:hover{transform:translateY(-1px);box-shadow:0 5px 18px rgba(99,102,241,.45);}
+  .nav-next:disabled{background:#9CA3AF;box-shadow:none;cursor:not-allowed;transform:none;}
+  .nav-submit{
+    background:linear-gradient(135deg,#34D399,#059669);
+    color:#fff;box-shadow:0 3px 12px rgba(52,211,153,.3);
+  }
+  .nav-submit:hover{transform:translateY(-1px);box-shadow:0 5px 18px rgba(52,211,153,.45);}
+  .nav-center{font-size:13px;color:var(--text-light);}
+  .unanswered{background:#FEF2F2;border:1px solid #FECACA;border-radius:10px;padding:14px 16px;margin-bottom:16px;}
+  .unanswered h4{font-size:13px;color:#B91C1C;margin-bottom:8px;}
+  .unanswered .ua-list{display:flex;flex-wrap:wrap;gap:6px;}
+  .unanswered .ua-item{display:inline-flex;align-items:center;justify-content:center;min-width:32px;height:28px;border-radius:6px;background:#fff;border:1px solid #FCA5A5;color:#B91C1C;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;}
+  .unanswered .ua-item:hover{background:#B91C1C;color:#fff;}
+  .result
+  .result{display:none;animation:fadeUp .4s ease;}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+  .res-card{
+    background:var(--card);border-radius:14px;padding:28px 20px;
+    text-align:center;box-shadow:0 2px 12px rgba(0,0,0,.07);margin-bottom:16px;
+  }
+  .res-big{font-size:48px;font-weight:700;line-height:1;}
+  .res-label{font-size:14px;color:var(--text-light);margin-top:4px;}
+  .res-level{font-size:20px;font-weight:700;margin:16px 0 6px;}
+  .res-desc{font-size:13px;color:var(--text-light);max-width:460px;margin:0 auto;line-height:1.7;}
+
+  .detail-card{
+    background:var(--card);border-radius:10px;padding:18px;
+    box-shadow:0 1px 6px rgba(0,0,0,.05);margin-bottom:16px;
+  }
+  .detail-card h3{font-size:15px;margin-bottom:12px;}
+  .d-row{
+    display:flex;justify-content:space-between;padding:7px 0;
+    border-bottom:1px solid var(--border);font-size:13px;
+  }
+  .d-row:last-child{border-bottom:none;}
+  .d-row .dl{color:var(--text-light);}
+  .d-row .dv{font-weight:600;}
+
+  .factor-card{
+    background:var(--card);border-radius:10px;padding:18px;
+    box-shadow:0 1px 6px rgba(0,0,0,.05);margin-bottom:16px;
+  }
+  .factor-card h3{font-size:15px;margin-bottom:14px;}
+  .factor-item{margin-bottom:12px;}
+  .factor-item:last-child{margin-bottom:0;}
+  .factor-head{display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px;}
+  .factor-name{font-weight:500;}
+  .factor-score{font-weight:600;}
+  .factor-bar{height:8px;background:var(--border);border-radius:4px;overflow:hidden;}
+  .factor-fill{height:100%;border-radius:4px;transition:width .6s ease;}
+
+  .disclaimer{
+    background:#FFFBEB;border:1px solid #FDE68A;border-radius:8px;
+    padding:14px;font-size:12px;color:#92400E;line-height:1.7;
+  }
+  .disclaimer strong{display:block;margin-bottom:4px;}
+
+  .restart-btn{
+    display:inline-flex;align-items:center;gap:4px;
+    margin-top:16px;padding:8px 24px;background:#fff;
+    color:var(--primary);border:1.5px solid var(--primary);border-radius:8px;
+    font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;
+  }
+  .restart-btn:hover{background:var(--primary);color:#fff;}
+
+  @media(max-width:480px){
+    .opts{grid-template-columns:repeat(5,1fr);}
+    .opt .o-text{display:none;}
+    .opt{padding:10px 2px;}
+    .header h1{font-size:19px;}
+    .nav-btn{padding:10px 20px;font-size:13px;}
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <a href="index.html" class="back-link">← 返回首页</a>
+    <h1>症状自评量表 (SCL-90)</h1>
+    <p>Derogatis 编制 · 90 题 · 约 15 分钟 · 最近一周内的感觉</p>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-info">
+      <span>答题进度</span>
+      <span id="pText">1 / 90</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="pFill"></div></div>
+  </div>
+
+  <div class="q-area" id="qArea">
+    <div class="q-card" id="qCard">
+      <div class="q-head">
+        <span class="q-num" id="qNum">1</span>
+        <span class="q-text" id="qText"></span>
+      </div>
+      <div class="opts" id="qOpts"></div>
+    </div>
+
+    <div class="nav-btns">
+      <button class="nav-btn nav-prev" id="btnPrev" onclick="goPrev()">← 上一题</button>
+      <span class="nav-center" id="navCenter"></span>
+      <button class="nav-btn nav-next" id="btnNext" onclick="goNext()">下一题 →</button>
+    </div>
+    <div class="unanswered" id="unanswered" style="display:none">
+      <h4>⚠️ 以下题目尚未作答，点击可跳转：</h4>
+      <div class="ua-list" id="uaList"></div>
+    </div>
+  </div>
+
+  <div class="result" id="resSection">
+    <div class="res-card">
+      <div class="res-big" id="resTotal">--</div>
+      <div class="res-label">总分</div>
+      <div class="res-level" id="resLevel">--</div>
+      <div class="res-desc" id="resDesc"></div>
+    </div>
+
+    <div class="detail-card">
+      <h3>总体指标</h3>
+      <div class="d-row"><span class="dl">总分</span><span class="dv" id="dTotal">--</span></div>
+      <div class="d-row"><span class="dl">总均分</span><span class="dv" id="dAvg">--</span></div>
+      <div class="d-row"><span class="dl">阳性项目数（≥2分）</span><span class="dv" id="dPos">--</span></div>
+      <div class="d-row"><span class="dl">阴性项目数（=1分）</span><span class="dv" id="dNeg">--</span></div>
+      <div class="d-row"><span class="dl">阳性症状均分</span><span class="dv" id="dPosAvg">--</span></div>
+    </div>
+
+    <div class="factor-card">
+      <h3>因子分分析（≥2 为阳性）</h3>
+      <div id="factorBars"></div>
+    </div>
+
+    <div class="disclaimer">
+      <strong>⚠️ 免责声明</strong>
+      本量表为专业心理测评工具，仅作为自我筛查参考，不能替代专业医疗诊断。SCL-90 应在专业咨询师指导下使用。如您感到心理困扰，请及时前往正规医院精神科或心理科就诊。
+    </div>
+    <div style="text-align:center"><button class="restart-btn" onclick="restart()">↺ 重新测评</button></div>
+  </div>
+</div>
+
+<script>
+const QS = [
+  "头痛","神经过敏，心中不踏实","头脑中有不必要的想法或字句盘旋","头昏或昏倒",
+  "对异性的兴趣减退","对旁人责备求全","感到别人能控制你的思想","责怪别人制造麻烦",
+  "忘记性大","担心自己的衣饰整齐及仪态的端正","容易烦恼和激动","胸痛",
+  "害怕空旷的场所或街道","感到自己的精力下降，活动减慢","想结束自己的生命",
+  "听到旁人听不到的声音","发抖","感到大多数人都不可信任","胃口不好","容易哭泣",
+  "同异性相处时感到害羞不自在","感到受骗，中了圈套或有人想抓您",
+  "无缘无故地突然感到害怕","自己不能控制地大发脾气","怕单独出门","经常责怪自己",
+  "腰痛","感到难以完成任务","感到孤独","感到苦闷","过分担忧","对事物不感兴趣",
+  "感到害怕","我的感情容易受到伤害","旁人能知道您的私下想法",
+  "感到别人不理解您不同情你","感到人们对你不友好，不喜欢您",
+  "做事必须做得很慢以保证做得正确","心跳得很厉害","恶心或胃部不舒服",
+  "感到比不上他人","肌肉酸痛","感到有人在监视您谈论您","难以入睡",
+  "做事必须反复检查","难以作出决定","怕乘电车、公共汽车、地铁或火车",
+  "呼吸有困难","一阵阵发冷或发热","因为感到害怕而避开某些东西，场合或活动",
+  "脑子变空了","身体发麻或刺痛","喉咙有梗塞感","感到对前途没有希望",
+  "不能集中注意力","感到身体的某一部分较弱无力","感到紧张或容易紧张",
+  "感到手或脚发沉","想到有关死亡的事","吃得太多",
+  "当别人看着您或谈论您时感到不自在","有一些不属于您自己的想法",
+  "有想打人或伤害他人的冲动","醒得太早","必须反复洗手、点数目或触摸某些东西",
+  "睡得不稳不深","有想摔坏或破坏东西的冲动","有一些别人没有的想法或念头",
+  "感到对别人神经过敏","在商店或电影院等人多的地方感到不自在",
+  "感到任何事情都很难做","一阵阵恐惧或惊恐","感到在公共场合吃东西很不舒服",
+  "经常与人争论","单独一人时神经很紧张","别人对您的成绩没有作出恰当的评价",
+  "即使和别人在一起也感到孤单","感到坐立不安心神不宁","感到自己没有什么价值",
+  "感到熟悉的东西变成陌生或不象是真的","大叫或摔东西","害怕会在公共场合昏倒",
+  "感到别人想占您的便宜","为一些有关\"性\"的想法而很苦恼",
+  "认为应该因为自己的过错而受到惩罚","感到要赶快把事情做完",
+  "感到自己的身体有严重问题","从未感到和其他人很亲近","感到自己有罪",
+  "感到自己的脑子有毛病"
+];
+
+const FACTORS = [
+  {name:"躯体化", items:[1,4,12,27,40,42,48,49,52,53,56,58], color:"#F97316"},
+  {name:"强迫症状", items:[3,9,10,28,38,45,46,51,55,65], color:"#8B5CF6"},
+  {name:"人际关系敏感", items:[6,21,34,36,37,41,61,69,73], color:"#EC4899"},
+  {name:"抑郁", items:[5,14,15,20,22,26,29,30,31,32,54,71,79], color:"#3B82F6"},
+  {name:"焦虑", items:[2,17,23,33,39,57,72,78,80,86], color:"#EF4444"},
+  {name:"敌对", items:[11,24,63,67,74,81], color:"#DC2626"},
+  {name:"恐怖", items:[13,25,47,50,70,75,82], color:"#7C3AED"},
+  {name:"偏执", items:[8,18,43,68,76,83], color:"#0891B2"},
+  {name:"精神病性", items:[7,16,35,62,77,84,85,87,88,90], color:"#6D28D9"},
+  {name:"其他", items:[19,44,59,60,64,66,89], color:"#6B7280"}
+];
+
+const OT = ["没有","很轻","中等","偏重","严重"];
+const TOTAL = 90;
+const A = {};
+let cur = 0;
+
+function showQ() {
+  const id = cur + 1;
+  const t = QS[cur];
+  const area = document.getElementById("qArea");
+  area.style.display = "block";
+  area.style.animation = "none";
+  area.offsetHeight;
+  area.style.animation = "slideIn .3s ease";
+
+  document.getElementById("qNum").textContent = id;
+  document.getElementById("qText").textContent = t;
+
+  const optsEl = document.getElementById("qOpts");
+  optsEl.innerHTML = [1,2,3,4,5].map(v => {
+    const sel = A[id] === v ? " sel" : "";
+    return `<div class="opt${sel}" onclick="pick(${id},${v},this)">
+      <div class="o-num">${v}</div><div class="o-text">${OT[v-1]}</div>
+    </div>`;
+  }).join("");
+
+  const answered = Object.keys(A).length;
+  document.getElementById("pText").textContent = `${id} / ${TOTAL}`;
+  document.getElementById("pFill").style.width = (answered / TOTAL * 100) + "%";
+
+  document.getElementById("btnPrev").disabled = cur === 0;
+  const btnNext = document.getElementById("btnNext");
+  const navCenter = document.getElementById("navCenter");
+
+  if (cur === TOTAL - 1) {
+    btnNext.textContent = "查看结果";
+    btnNext.className = "nav-btn nav-submit";
+    btnNext.disabled = answered < TOTAL;
+    navCenter.textContent = answered < TOTAL ? `还有 ${TOTAL - answered} 题未答` : "全部完成";
+  } else {
+    btnNext.textContent = "下一题 →";
+    btnNext.className = "nav-btn nav-next";
+    btnNext.disabled = false;
+    navCenter.textContent = "";
+  }
+}
+
+function pick(id, v, el) {
+  const optsEl = document.getElementById("qOpts");
+  optsEl.querySelectorAll(".opt").forEach(o => o.classList.remove("sel"));
+  el.classList.add("sel");
+  A[id] = v;
+  const answered = Object.keys(A).length;
+  document.getElementById("pFill").style.width = (answered / TOTAL * 100) + "%";
+  if (cur === TOTAL - 1) {
+    document.getElementById("btnNext").disabled = answered < TOTAL;
+    document.getElementById("navCenter").textContent = answered < TOTAL ? `还有 ${TOTAL - answered} 题未答` : "全部完成";
+    updateUnanswered();
+  } else {
+    setTimeout(() => { if (A[id] === v && cur < TOTAL - 1) { cur++; showQ(); } }, 400);
+  }
+}
+
+function updateUnanswered() {
+  const missing = [];
+  for (let i = 0; i < TOTAL; i++) { if (A[i + 1] === undefined) missing.push(i); }
+  const el = document.getElementById("unanswered"), list = document.getElementById("uaList");
+  if (missing.length > 0) {
+    el.style.display = "block";
+    list.innerHTML = missing.map(i => `<span class="ua-item" onclick="jumpTo(${i})">第${i+1}题</span>`).join("");
+  } else { el.style.display = "none"; }
+}
+
+function jumpTo(idx) { cur = idx; showQ(); }
+
+function goPrev() {
+  if (cur > 0) { cur--; showQ(); window.scrollTo({top:0,behavior:"smooth"}); }
+}
+
+function goNext() {
+  if (cur < TOTAL - 1) {
+    cur++; showQ(); window.scrollTo({top:0,behavior:"smooth"});
+  } else {
+    if (Object.keys(A).length === TOTAL) showResult();
+  }
+}
+
+function showResult() {
+  let total = 0;
+  for (let i = 1; i <= 90; i++) total += A[i];
+  const avg = (total / 90).toFixed(2);
+  let pos = 0, neg = 0, posSum = 0;
+  for (let i = 1; i <= 90; i++) {
+    if (A[i] >= 2) { pos++; posSum += A[i]; }
+    if (A[i] === 1) neg++;
+  }
+  const posAvg = pos > 0 ? (posSum / pos).toFixed(2) : "0.00";
+
+  const factorResults = FACTORS.map(f => {
+    const sum = f.items.reduce((s, id) => s + A[id], 0);
+    const score = (sum / f.items.length).toFixed(2);
+    return { ...f, score: parseFloat(score), positive: parseFloat(score) >= 2 };
+  });
+
+  let lev, color, desc;
+  if (total < 160) { lev = "心理健康状况良好"; color = "#34D399"; desc = "您的 SCL-90 总分在正常范围内，各项心理症状指标均无明显异常。请继续保持良好的心理状态和健康的生活方式。"; }
+  else if (total < 200) { lev = "可能存在轻度心理问题"; color = "#FBBF24"; desc = "您的总分偏高，可能存在某些心理困扰。建议关注自身情绪和心理状态，适当进行自我调节。如症状持续，建议寻求专业心理咨询。"; }
+  else if (total < 250) { lev = "可能存在中度心理问题"; color = "#F97316"; desc = "您的总分明显偏高，提示可能存在较明显的心理问题，这可能已影响到日常生活。建议尽早前往专业机构进行心理咨询或评估。"; }
+  else { lev = "可能存在较严重的心理问题"; color = "#EF4444"; desc = "您的总分显著偏高，提示可能存在较为严重的心理困扰。强烈建议您尽快前往正规医院精神科或心理科就诊，由专业医师进行系统评估和治疗。"; }
+
+  const posFactors = factorResults.filter(f => f.positive);
+  if (posFactors.length > 0 && total < 160) {
+    desc += "\n\n注意：虽然总分在正常范围，但以下因子分偏高需关注：" + posFactors.map(f => f.name).join("、") + "。";
+  }
+
+  document.getElementById("qArea").style.display = "none";
+  document.querySelector(".progress-wrap").style.display = "none";
+  document.getElementById("resSection").style.display = "block";
+
+  document.getElementById("resTotal").textContent = total;
+  document.getElementById("resTotal").style.color = color;
+  document.getElementById("resLevel").textContent = lev;
+  document.getElementById("resLevel").style.color = color;
+  document.getElementById("resDesc").textContent = desc;
+  document.getElementById("dTotal").textContent = total + " 分";
+  document.getElementById("dAvg").textContent = avg;
+  document.getElementById("dPos").textContent = pos + " 项";
+  document.getElementById("dNeg").textContent = neg + " 项";
+  document.getElementById("dPosAvg").textContent = posAvg;
+
+  document.getElementById("factorBars").innerHTML = factorResults.map(f => {
+    const pct = Math.min(f.score / 5 * 100, 100);
+    const barColor = f.positive ? f.color : "#34D399";
+    const mark = f.positive ? " ⚠️" : " ✓";
+    return `<div class="factor-item">
+      <div class="factor-head">
+        <span class="factor-name">${f.name}</span>
+        <span class="factor-score" style="color:${f.positive ? f.color : 'var(--text-light)'}">${f.score.toFixed(2)}${mark}</span>
+      </div>
+      <div class="factor-bar">
+        <div class="factor-fill" style="width:${pct}%;background:${barColor};"></div>
+      </div>
+    </div>`;
+  }).join("");
+
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function restart() {
+  Object.keys(A).forEach(k => delete A[k]);
+  cur = 0;
+  document.getElementById("resSection").style.display = "none";
+  document.querySelector(".progress-wrap").style.display = "block";
+  showQ();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+showQ();
+</script>
+</body>
+</html>
